@@ -73,7 +73,7 @@ instance.prototype.init_tcp = function () {
     }
 	
 	if (self.config.host) {
-		self.socket = new tcp(self.config.host, 6211, {reconnect_interval: self.config.recon});
+		self.socket = new tcp(self.config.host, 6211);
 
 		self.socket.on('status_change', function (status, message) {
 			self.status(status, message);
@@ -150,14 +150,6 @@ instance.prototype.config_fields = function () {
             width: 6,
             label: 'Domain',
             value: "0",
-            regex: self.REGEX_NUMBER
-        },
-		{
-            type: 'textinput',
-            id: 'Reconnect Interval',
-            width: 12,
-            label: 'recon',
-            value: "10000",
             regex: self.REGEX_NUMBER
         },
     ]
