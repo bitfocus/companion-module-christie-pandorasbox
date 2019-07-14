@@ -273,13 +273,13 @@ instance.prototype.incomingData = function(data) {
 		case 72 :
 			seq_state = receivebuffer.readInt32BE(19);
 			if (seq_state == 1){	
-				self.feedbackstate.state = 'Play';
+				self.feedbackstate.seqstate = 'Play';
 				self.setVariable('seqstate', 'Play');
 			} else if (seq_state == 2) {	
-				self.feedbackstate.state = 'Stop';
+				self.feedbackstate.seqstate = 'Stop';
 				self.setVariable('seqstate', 'Stop');
 			} else if (seq_state == 3) {	
-				self.feedbackstate.state = 'Pause';
+				self.feedbackstate.seqstate = 'Pause';
 				self.setVariable('seqstate', 'Pause');
 			};
 			self.checkFeedbacks('state_color');
