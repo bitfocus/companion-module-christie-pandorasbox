@@ -26,11 +26,11 @@ function instance(system, id, config) {
 	self.CMD_GET_SEQ_TRANSPORTMODE = 72;
 	self.CMD_GET_SEQ_TIME = 73;	
 	self.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE = 78;		
-	
+
 	self.feedbackstate = {
-			seqstate: 'Stop',
-			remainingQtime: 'Normal',
-		};	
+		seqstate: 'Stop',
+		remainingQtime: 'Normal',
+	};
 	
 
 	// super-constructor
@@ -82,67 +82,67 @@ instance.prototype.init_feedbacks = function() {
 
 	var feedbacks = {
 		state_color: {
-            label: 'Change color from Sequence State',
-            description: 'Change the colors of a bank according to the Seq state',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Running: Foreground color',
-                    id: 'run_fg',
-                    default: self.rgb(255,255,255)
-                },
-                {
-                    type: 'colorpicker',
-                    label: 'Running: Background color',
-                    id: 'run_bg',
-                    default: self.rgb(0,100,0)
-                },
-                {
-                    type: 'colorpicker',
-                    label: 'Paused: Foreground color',
-                    id: 'pause_fg',
-                    default: self.rgb(255,255,255)
-                },
-                {
-                    type: 'colorpicker',
-                    label: 'Paused: Background color',
-                    id: 'pause_bg',
-                    default: self.rgb(170,80,0)
-                },
-                {
-                    type: 'colorpicker',
-                    label: 'Stopped: Foreground color',
-                    id: 'stop_fg',
-                    default: self.rgb(255,0,0)
-                },
-                {
-                    type: 'colorpicker',
-                    label: 'Stopped: Background color',
-                    id: 'stop_bg',
-                    default: self.rgb(0,0,0)
-                }
-            ],
-            callback: function(feedback, bank) {
-                if (self.feedbackstate.seqstate == 'Play') {
-                    return {
-                        color: feedback.options.run_fg,
-                        bgcolor: feedback.options.run_bg
-                    };
-                }
-                else if (self.feedbackstate.seqstate == 'Pause') {
-                    return {
-                        color: feedback.options.pause_fg,
-                        bgcolor: feedback.options.pause_bg
-                    }
-                }
-                else if (self.feedbackstate.seqstate == 'Stop') {
-                    return {
-                        color: feedback.options.stop_fg,
-                        bgcolor: feedback.options.stop_bg
-                    }
-                }
-            }
-        },
+			label: 'Change color from Sequence State',
+			description: 'Change the colors of a bank according to the Seq state',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Running: Foreground color',
+					id: 'run_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Running: Background color',
+					id: 'run_bg',
+					default: self.rgb(0,100,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused: Foreground color',
+					id: 'pause_fg',
+					default: self.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Paused: Background color',
+					id: 'pause_bg',
+					default: self.rgb(170,80,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Stopped: Foreground color',
+					id: 'stop_fg',
+					default: self.rgb(255,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Stopped: Background color',
+					id: 'stop_bg',
+					default: self.rgb(0,0,0)
+				}
+			],
+			callback: function(feedback, bank) {
+				if (self.feedbackstate.seqstate == 'Play') {
+					return {
+						color: feedback.options.run_fg,
+						bgcolor: feedback.options.run_bg
+					};
+				}
+				else if (self.feedbackstate.seqstate == 'Pause') {
+					return {
+						color: feedback.options.pause_fg,
+						bgcolor: feedback.options.pause_bg
+					}
+				}
+				else if (self.feedbackstate.seqstate == 'Stop') {
+					return {
+						color: feedback.options.stop_fg,
+						bgcolor: feedback.options.stop_bg
+					}
+				}
+			}
+		},
 		next_Q_color: {
 			label: 'Change color depending on Cue remaining Time',
 			description: 'Change the colors of a bank according to the Time until next Cue',
@@ -184,7 +184,7 @@ instance.prototype.init_feedbacks = function() {
 					default: self.rgb(255,0,0)
 				}
 			],
-            callback: function(feedback, bank) {
+			callback: function(feedback, bank) {
 				if (self.feedbackstate.remainingQtime == 'Normal') {
 					return {
 						color: feedback.options.countdown_fg,
@@ -206,6 +206,7 @@ instance.prototype.init_feedbacks = function() {
 			}
 		}
 	};
+
 	self.setFeedbackDefinitions(feedbacks);
 };
 
@@ -264,7 +265,7 @@ instance.prototype.init_variables = function() {
 		{
 			label: 'Time until next Cue (frames)',
 			name: 'nextqtime_f'
-		},
+		}
 	];
 
 	self.updateNextQID(1);
@@ -292,7 +293,7 @@ instance.prototype.incomingData = function(data) {
 	let magic = 'PBAU';
 	let domain = parseInt(self.config.domain);	
 	var receivebuffer = data;
-	
+
 	var rcv_cmd_id = 0;
 	var seq_state = 0;
 	var seq_h = '00';
@@ -308,65 +309,66 @@ instance.prototype.incomingData = function(data) {
 
 	if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
 		rcv_cmd_id = receivebuffer.readInt16BE(17);
-		switch (rcv_cmd_id) {
-		case 72 :
-			seq_state = receivebuffer.readInt32BE(19);
-			if (seq_state == 1){	
-				self.feedbackstate.seqstate = 'Play';
-				self.setVariable('seqstate', 'Play');
-			} else if (seq_state == 2) {	
-				self.feedbackstate.seqstate = 'Stop';
-				self.setVariable('seqstate', 'Stop');
-			} else if (seq_state == 3) {	
-				self.feedbackstate.seqstate = 'Pause';
-				self.setVariable('seqstate', 'Pause');
-			};
-			self.checkFeedbacks('state_color');
-			break;
-					
-		case 73 :
-			seq_h = receivebuffer.readInt32BE(19);
-			seq_m = receivebuffer.readInt32BE(23);
-			seq_s = receivebuffer.readInt32BE(27);
-			seq_f = receivebuffer.readInt32BE(31);
-		
-			self.setVariable('seqtime_h', self.padZero(2,seq_h));
-			self.setVariable('seqtime_m', self.padZero(2,seq_m));
-			self.setVariable('seqtime_s', self.padZero(2,seq_s));
-			self.setVariable('seqtime_f', self.padZero(2,seq_f));
-			self.setVariable('seqtime', self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f));
-			break;
 
-		case 78 :
-			nextq_h = receivebuffer.readInt32BE(19);
-			nextq_m = receivebuffer.readInt32BE(23);
-			nextq_s = receivebuffer.readInt32BE(27);
-			nextq_f = receivebuffer.readInt32BE(31);
-		
-			self.setVariable('nextqtime_h', self.padZero(2,nextq_h));
-			self.setVariable('nextqtime_m', self.padZero(2,nextq_m));
-			self.setVariable('nextqtime_s', self.padZero(2,nextq_s));
-			self.setVariable('nextqtime_f', self.padZero(2,nextq_f));
-			self.setVariable('nextqtime', self.padZero(2,nextq_h) +':'+self.padZero(2,nextq_m)+':'+self.padZero(2,nextq_s)+':'+self.padZero(2,nextq_f));
-			
-			if (nextq_h == 0 && nextq_m == 0 && nextq_s < 5) {
-				self.feedbackstate.remainingQtime = 'Less05';
-			} else if  (nextq_h == 0 && nextq_m == 0 && nextq_s < 10) {
-				self.feedbackstate.remainingQtime = 'Less10';
-			} else {
-				self.feedbackstate.remainingQtime = 'Normal';
-			};
-			self.checkFeedbacks('next_Q_color');
-			break;
+		switch (rcv_cmd_id) {
+			case 72 :
+				seq_state = receivebuffer.readInt32BE(19);
+				if (seq_state == 1){	
+					self.feedbackstate.seqstate = 'Play';
+					self.setVariable('seqstate', 'Play');
+				} else if (seq_state == 2) {	
+					self.feedbackstate.seqstate = 'Stop';
+					self.setVariable('seqstate', 'Stop');
+				} else if (seq_state == 3) {	
+					self.feedbackstate.seqstate = 'Pause';
+					self.setVariable('seqstate', 'Pause');
+				};
+				self.checkFeedbacks('state_color');
+				break;
+
+			case 73 :
+				seq_h = receivebuffer.readInt32BE(19);
+				seq_m = receivebuffer.readInt32BE(23);
+				seq_s = receivebuffer.readInt32BE(27);
+				seq_f = receivebuffer.readInt32BE(31);
+
+				self.setVariable('seqtime_h', self.padZero(2,seq_h));
+				self.setVariable('seqtime_m', self.padZero(2,seq_m));
+				self.setVariable('seqtime_s', self.padZero(2,seq_s));
+				self.setVariable('seqtime_f', self.padZero(2,seq_f));
+				self.setVariable('seqtime', self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f));
+				break;
+
+			case 78 :
+				nextq_h = receivebuffer.readInt32BE(19);
+				nextq_m = receivebuffer.readInt32BE(23);
+				nextq_s = receivebuffer.readInt32BE(27);
+				nextq_f = receivebuffer.readInt32BE(31);
+
+				self.setVariable('nextqtime_h', self.padZero(2,nextq_h));
+				self.setVariable('nextqtime_m', self.padZero(2,nextq_m));
+				self.setVariable('nextqtime_s', self.padZero(2,nextq_s));
+				self.setVariable('nextqtime_f', self.padZero(2,nextq_f));
+				self.setVariable('nextqtime', self.padZero(2,nextq_h) +':'+self.padZero(2,nextq_m)+':'+self.padZero(2,nextq_s)+':'+self.padZero(2,nextq_f));
+
+				if (nextq_h == 0 && nextq_m == 0 && nextq_s < 5) {
+					self.feedbackstate.remainingQtime = 'Less05';
+				} else if  (nextq_h == 0 && nextq_m == 0 && nextq_s < 10) {
+					self.feedbackstate.remainingQtime = 'Less10';
+				} else {
+					self.feedbackstate.remainingQtime = 'Normal';
+				};
+				self.checkFeedbacks('next_Q_color');
+				break;
 		}
-	}	
+	}
 	//self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
 	//debug("Buffer : ", receivebuffer);
 };
 
 instance.prototype.init_tcp = function() {
 	var self = this;
-	
+
 	if (self.socket !== undefined) {
 		self.socket.destroy();
 		delete self.socket;
@@ -421,7 +423,7 @@ instance.prototype.send_getTimer = function(gseqid, gnextqseqid) {
 	var gettimer;
 	var nextqtimeid = gnextqseqid;
 	var seqtimeid = gseqid;
-	
+
 	// Create all PBAutomation Commands
 	message1 = self.shortToBytes(self.CMD_GET_SEQ_TIME)
 				.concat(self.intToBytes(parseInt(seqtimeid)));
@@ -432,7 +434,7 @@ instance.prototype.send_getTimer = function(gseqid, gnextqseqid) {
 	message3 = self.shortToBytes(self.CMD_GET_SEQ_TRANSPORTMODE)
 				.concat(self.intToBytes(parseInt(seqtimeid)));
 			buf3 = Buffer.from(self.prependHeader(message3));
-			
+
 	if (self.isConnected()) {
 		clearInterval(self.gettimer_interval);
 		var gettime_period = 80; // ms
@@ -500,7 +502,7 @@ instance.prototype.config_fields = function() {
  */
 instance.prototype.destroy = function() {
 	let self = this;
-	
+
 	clearInterval(self.gettimer_interval);
 	setTimeout(function() {
 		debug('destroy', self.id);
@@ -806,7 +808,7 @@ instance.prototype.action = function(action) {
 		case 'reset_all':
 			message = self.shortToBytes(self.CMD_RESET_ALL);
 			buf = Buffer.from(self.prependHeader(message));
-			break;		
+			break;
 		
 		case 'timer_seq_id':
 			self.updateSeqID(opt.timerseq);
@@ -814,8 +816,7 @@ instance.prototype.action = function(action) {
 		
 		case 'nextq_seq_id':
 			self.updateNextQID(opt.nextqseq);
-			break;	
-			
+			break;
 		}
 
 		if (buf !== undefined) {
@@ -824,9 +825,9 @@ instance.prototype.action = function(action) {
 };
 
 instance.prototype.padZero = function(size, num) {
-    var s = num+"";
-    while (s.length < size) s = "0" + s;
-    return s;
+	var s = num+"";
+	while (s.length < size) s = "0" + s;
+	return s;
 }
 
 
@@ -894,6 +895,3 @@ instance.prototype.prependHeader = function(body) {
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
-
-
-
