@@ -1,6 +1,6 @@
 {
 	"name": "christie-pandorasbox",
-	"version": "2.0.3",
+	"version": "3.0.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Media Server"
@@ -10,7 +10,7 @@
 	"shortname": "christie-pb",
 	"homepage": "https://github.com/bitfocus/companion-module-christie-pandorasbox#readme",
 	"description": "Module to control Christie Pandoras Box Media Servers",
-	"main": "christie-pandorasbox.js",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
