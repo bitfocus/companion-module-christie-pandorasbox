@@ -1,6 +1,26 @@
 {
 	"name": "christie-pandorasbox",
 	"version": "3.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-christie-pandorasbox.git"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@companion-module/base": "~1.1.1"
+	},
+	"dev-dependencies": {
+		 "@companion-module/tools": "^1.0.0",
+     "eslint": "^6.5.1",
+     "eslint-config-standard": "^14.1.0",
+     "eslint-plugin-import": "^2.18.2",
+     "eslint-plugin-node": "^10.0.0",
+     "eslint-plugin-promise": "^4.2.1",
+     "eslint-plugin-standard": "^4.0.1"	},
 	"api_version": "1.0.0",
 	"keywords": [
 		"Media Server"
@@ -10,17 +30,8 @@
 	"shortname": "christie-pb",
 	"homepage": "https://github.com/bitfocus/companion-module-christie-pandorasbox#readme",
 	"description": "Module to control Christie Pandoras Box Media Servers",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
 	"author": "Daniel Kaminski <daniel@dk-production.de>",
-	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-christie-pandorasbox/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-christie-pandorasbox.git"
 	}
 }
