@@ -1,4 +1,5 @@
 const { TCPHelper } = require("@companion-module/base");
+const constants = require("./constants");
 
 module.exports = {
 	initTCP: function() {
@@ -10,6 +11,7 @@ module.exports = {
 		}
 
 		if (self.config.host) {
+			// self.socket = new TCPHelper(self.config.host, self.config.port);
 			self.socket = new TCPHelper(self.config.host, 6211);
 
 			self.socket.on('status_change', function(status, message) {
@@ -24,7 +26,6 @@ module.exports = {
 				self.updateStatus(self.STATE_OK);
 				self.initVariables();
 				//self.init_feedbacks();
-				// debug("Connected");
 				self.log('debug', 'Connected');
 			})
 
@@ -32,7 +33,12 @@ module.exports = {
 				self.incomingData(data);
 			});
 		}
+
+		if (self.config.domain) {
+			self.domain = self.intToBytes(parseInt(self.config.domain));
+		}
 	},
+
 
 	/**
 	 *
@@ -43,12 +49,11 @@ module.exports = {
 		let self = this;
 
 		if (self.isConnected()) {
-			// debug('sending', cmd, 'to', self.config.host);
 			var dbg = (String(cmd) + 'to' + String(self.config.host));
-			self.log('debug', )
+			self.log('debug', dbg);
 			return self.socket.send(cmd);
 		} else {
-			self.log('debug', 'Socket not connected');
+			self.log('debug', 'Send: Socket not connected');
 		}
 
 		return false;
@@ -61,13 +66,13 @@ module.exports = {
 		var seqtimeid = gseqid;
 
 		// Create all PBAutomation Commands
-		message1 = self.shortToBytes(self.CMD_GET_SEQ_TIME)
+		message1 = self.shortToBytes(constants.CMD_GET_SEQ_TIME)
 					.concat(self.intToBytes(parseInt(seqtimeid)));
 				buf1 = Buffer.from(self.prependHeader(message1));
-		message2 = self.shortToBytes(self.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE)
+		message2 = self.shortToBytes(constants.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE)
 					.concat(self.intToBytes(parseInt(nextqtimeid)));
 				buf2 = Buffer.from(self.prependHeader(message2));
-		message3 = self.shortToBytes(self.CMD_GET_SEQ_TRANSPORTMODE)
+		message3 = self.shortToBytes(constants.CMD_GET_SEQ_TRANSPORTMODE)
 					.concat(self.intToBytes(parseInt(seqtimeid)));
 				buf3 = Buffer.from(self.prependHeader(message3));
 
@@ -84,7 +89,7 @@ module.exports = {
 					},30);
 			}
 		} else {
-			self.log('debug', 'Socket not connected');
+			// self.log('debug', 'Get Timer: Socket not connected');
 		}
 		return false;
 	},
@@ -112,14 +117,14 @@ module.exports = {
 	    let magic = [80, 66, 65, 85]; // PBAU
 	    let preHeader = [1]; // version number
 
-	    let domain = self.intToBytes(parseInt(self.config.domain));
+	    // let domain = self.intToBytes(parseInt(self.config.domain));
 	    let postHeader = [
 	        Math.floor(body.length / 256), body.length % 256,
 	        0, 0, 0, 0,
 	        0, // protocol: 0 = TCP
 	    ];
 
-	    let header = preHeader.concat(domain).concat(postHeader);
+	    let header = preHeader.concat(self.domain).concat(postHeader);
 
 	    let checksum = header.reduce((p, c) => p + c, 0) % 256;
 
@@ -165,5 +170,100 @@ module.exports = {
 		}
 
 			return re;
+	},
+
+	updateSeqID: function(changeseqid) {
+		var self = this;
+		seqid = changeseqid;
+		CurrentSeqID = changeseqid;
+		CurrentRemeiningSeqID = undefined;
+		self.send_getTimer(CurrentSeqID, CurrentRemainingSeqID);
+	},
+
+	updateNextQID: function(changenextqid) {
+		var self = this;
+		nextqid = changenextqid;
+		CurrentSeqID = undefined;
+		CurrentRemainingSeqID = changenextqid;
+		self.send_getTimer(CurrentSeqID, CurrentRemainingSeqID);
+	},
+
+	incomingData: function(data) {
+		var self = this;
+
+		let magic = 'PBAU';
+		let domain = parseInt(self.config.domain);	
+		var receivebuffer = data;
+
+		var rcv_cmd_id = 0;
+		var seq_state = 0;
+		var seq_h = '00';
+		var seq_m = '00';
+		var seq_s = '00';
+		var seq_f = '00';
+		var seq_time = '00:00:00:00'
+		var nextq_h = '00';
+		var nextq_m = '00';
+		var nextq_s = '00';
+		var nextq_f = '00';
+		var nextq_time = '00:00:00:00'
+
+		if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
+			rcv_cmd_id = receivebuffer.readInt16BE(17);
+
+			switch (rcv_cmd_id) {
+				case 72 :
+					seq_state = receivebuffer.readInt32BE(19);
+					if (seq_state == 1){	
+						self.feedbackstate.seqstate = 'Play';
+						seqstate = 'Play';
+					} else if (seq_state == 2) {	
+						self.feedbackstate.seqstate = 'Stop';
+						seqstate = 'Stop';
+					} else if (seq_state == 3) {	
+						self.feedbackstate.seqstate = 'Pause';
+						seqstate = 'Pause';
+					};
+					self.checkFeedbacks('state_color');
+					break;
+
+				case 73 :
+					seq_h = receivebuffer.readInt32BE(19);
+					seq_m = receivebuffer.readInt32BE(23);
+					seq_s = receivebuffer.readInt32BE(27);
+					seq_f = receivebuffer.readInt32BE(31);
+
+					seqtime_h = self.padZero(2,seq_h);
+					seqtime_m = self.padZero(2,seq_m);
+					seqtime_s = self.padZero(2,seq_s);
+					seqtime_f = self.padZero(2,seq_f);
+					seqtime = self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f);
+					break;
+
+				case 78 :
+					nextq_h = receivebuffer.readInt32BE(19);
+					nextq_m = receivebuffer.readInt32BE(23);
+					nextq_s = receivebuffer.readInt32BE(27);
+					nextq_f = receivebuffer.readInt32BE(31);
+
+					nextqtime_h = self.padZero(2,nextq_h);
+					nextqtime_m = self.padZero(2,nextq_m);
+					nextqtime_s = self.padZero(2,nextq_s);
+					nextqtime_f = self.padZero(2,nextq_f);
+					nextqtime = self.padZero(2,nextq_h) +':'+self.padZero(2,nextq_m)+':'+self.padZero(2,nextq_s)+':'+self.padZero(2,nextq_f);
+
+					if (nextq_h == 0 && nextq_m == 0 && nextq_s < 5) {
+						self.feedbackstate.remainingQtime = 'Less05';
+					} else if  (nextq_h == 0 && nextq_m == 0 && nextq_s < 10) {
+						self.feedbackstate.remainingQtime = 'Less10';
+					} else {
+						self.feedbackstate.remainingQtime = 'Normal';
+					};
+					self.checkFeedbacks('next_Q_color');
+					break;
+			}
+		}
+		//self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
+		//debug("Buffer : ", receivebuffer);
 	}
 }

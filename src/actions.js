@@ -1,4 +1,4 @@
-const variables = require("./variables");
+const utils = require("./utils");
 
 module.exports = {
 	/**
@@ -308,11 +308,11 @@ module.exports = {
 				break;
 		
 			case 'timer_seq_id':
-				variables.updateSeqID(opt.timerseq);
+				utils.updateSeqID(opt.timerseq);
 				break;
 		
 			case 'nextq_seq_id':
-				variables.updateNextQID(opt.nextqseq);
+				utils.updateNextQID(opt.nextqseq);
 				break;
 			}
 
