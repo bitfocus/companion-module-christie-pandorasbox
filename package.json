@@ -20,18 +20,6 @@
      "eslint-plugin-import": "^2.18.2",
      "eslint-plugin-node": "^10.0.0",
      "eslint-plugin-promise": "^4.2.1",
-     "eslint-plugin-standard": "^4.0.1"	},
-	"api_version": "1.0.0",
-	"keywords": [
-		"Media Server"
-	],
-	"manufacturer": "Christie Digital Systems",
-	"product": "Pandoras Box",
-	"shortname": "christie-pb",
-	"homepage": "https://github.com/bitfocus/companion-module-christie-pandorasbox#readme",
-	"description": "Module to control Christie Pandoras Box Media Servers",
-	"author": "Daniel Kaminski <daniel@dk-production.de>",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-christie-pandorasbox/issues"
+     "eslint-plugin-standard": "^4.0.1"
 	}
 }
