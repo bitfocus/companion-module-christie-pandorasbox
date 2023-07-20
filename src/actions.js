@@ -1,8 +1,10 @@
+const variables = require("./variables");
+
 module.exports = {
 	/**
 	 * Creates the actions for this module.
 	 */
-	actions: function(system) {
+	initActions: function() {
 		let self = this;
 		let actions = {};
 
@@ -210,113 +212,112 @@ module.exports = {
 					}
 				]
 			}
-	}
+	},
 
  /**
  * Executes the action and sends the TCP packet to Pandoras Box
  *
  * @param action      The action to perform
  */
-action: function(action) {
-	let self = this;
-	var opt = action.options;
+	action: function(action) {
+		let self = this;
+		var opt = action.options;
 
-	let buf = undefined;
-	let message = '';
+		let buf = undefined;
+		let message = '';
 
-	switch (action.action) {
-		case 'seq_transport':
-			message = self.shortToBytes(self.CMD_SET_SEQ_TRANSPORT_MODE)
-				.concat(self.intToBytes(parseInt(opt.seq)))
-				.concat(self.intToBytes(parseInt(opt.mode)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+		switch (action.action) {
+			case 'seq_transport':
+				message = self.shortToBytes(self.CMD_SET_SEQ_TRANSPORT_MODE)
+					.concat(self.intToBytes(parseInt(opt.seq)))
+					.concat(self.intToBytes(parseInt(opt.mode)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'seq_to_cue':
-			message = self.shortToBytes(self.CMD_MOVE_SEQ_TO_CUE)
-				.concat(self.intToBytes(parseInt(opt.seq)))
-				.concat(self.intToBytes(parseInt(opt.cueid)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'seq_to_cue':
+				message = self.shortToBytes(self.CMD_MOVE_SEQ_TO_CUE)
+					.concat(self.intToBytes(parseInt(opt.seq)))
+					.concat(self.intToBytes(parseInt(opt.cueid)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'seq_nextlast_cue':
-			message = self.shortToBytes(self.CMD_MOVE_SEQ_TO_LASTNEXTCUE)
-				.concat(self.intToBytes(parseInt(opt.seq)))
-				.concat([parseInt(opt.nextmode)]);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'seq_nextlast_cue':
+				message = self.shortToBytes(self.CMD_MOVE_SEQ_TO_LASTNEXTCUE)
+					.concat(self.intToBytes(parseInt(opt.seq)))
+					.concat([parseInt(opt.nextmode)]);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'seq_ignorenextcue':
-			message = self.shortToBytes(self.CMD_IGNORE_NEXT_CUE)
-				.concat(self.intToBytes(parseInt(opt.seq)))
-				.concat([parseInt(opt.doignore)]);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'seq_ignorenextcue':
+				message = self.shortToBytes(self.CMD_IGNORE_NEXT_CUE)
+					.concat(self.intToBytes(parseInt(opt.seq)))
+					.concat([parseInt(opt.doignore)]);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'seq_selection':
-			message = self.shortToBytes(self.CMD_SET_SEQ_SELECTION)
-				.concat(self.intToBytes(parseInt(opt.seq)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'seq_selection':
+				message = self.shortToBytes(self.CMD_SET_SEQ_SELECTION)
+					.concat(self.intToBytes(parseInt(opt.seq)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'recall_view':
-			message = self.shortToBytes(self.CMD_APPLY_VIEW)
-				.concat(self.intToBytes(parseInt(opt.view)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'recall_view':
+				message = self.shortToBytes(self.CMD_APPLY_VIEW)
+					.concat(self.intToBytes(parseInt(opt.view)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'save_project':
-			message = self.shortToBytes(self.CMD_SAVE_PROJECT);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'save_project':
+				message = self.shortToBytes(self.CMD_SAVE_PROJECT);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'toggle_fullscreenbyid':
-			message = self.shortToBytes(self.CMD_TOGGLE_FULLSCREEN)
-				.concat(self.intToBytes(parseInt(opt.site)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'toggle_fullscreenbyid':
+				message = self.shortToBytes(self.CMD_TOGGLE_FULLSCREEN)
+					.concat(self.intToBytes(parseInt(opt.site)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'set_SiteIPbyid':
-			message = self.shortToBytes(self.CMD_SET_SITE_IP)
-				.concat(self.intToBytes(parseInt(opt.site)))
-				.concat(self.shortToBytes(opt.siteip.length))
-				.concat(self.StrNarrowToBytes(opt.siteip));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'set_SiteIPbyid':
+				message = self.shortToBytes(self.CMD_SET_SITE_IP)
+					.concat(self.intToBytes(parseInt(opt.site)))
+					.concat(self.shortToBytes(opt.siteip.length))
+					.concat(self.StrNarrowToBytes(opt.siteip));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'clear_allactive':
-			message = self.shortToBytes(self.CMD_CLEAR_ALL_ACTIVE);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'clear_allactive':
+				message = self.shortToBytes(self.CMD_CLEAR_ALL_ACTIVE);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'store_allactive':
-			message = self.shortToBytes(self.CMD_STORE_ACTIVE)
-				.concat(self.intToBytes(parseInt(opt.seq)));
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'store_allactive':
+				message = self.shortToBytes(self.CMD_STORE_ACTIVE)
+					.concat(self.intToBytes(parseInt(opt.seq)));
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'clear_selection':
-			message = self.shortToBytes(self.CMD_CLEAR_SELECTION);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'clear_selection':
+				message = self.shortToBytes(self.CMD_CLEAR_SELECTION);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 
-		case 'reset_all':
-			message = self.shortToBytes(self.CMD_RESET_ALL);
-			buf = Buffer.from(self.prependHeader(message));
-			break;
+			case 'reset_all':
+				message = self.shortToBytes(self.CMD_RESET_ALL);
+				buf = Buffer.from(self.prependHeader(message));
+				break;
 		
-		case 'timer_seq_id':
-			self.updateSeqID(opt.timerseq);
-			break;
+			case 'timer_seq_id':
+				variables.updateSeqID(opt.timerseq);
+				break;
 		
-		case 'nextq_seq_id':
-			self.updateNextQID(opt.nextqseq);
-			break;
+			case 'nextq_seq_id':
+				variables.updateNextQID(opt.nextqseq);
+				break;
+			}
+
+			if (buf !== undefined) {
+				self.send(buf);
 		}
-
-		if (buf !== undefined) {
-			self.send(buf);
 	}
-};
-
 }

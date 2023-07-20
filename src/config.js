@@ -1,10 +1,31 @@
 module.exports = {
+	/**
+	 * The user updated the config.
+	 *
+	 * @param config         The new config object
+	 */
+	updateConfig: function(config) {
+		let self = this;
+
+		// Reconnect to Pandoras Box if the IP changed
+		if (self.config.host !== config.host || self.isConnected() === false) {
+			self.config.host = config.host;
+			self.init_tcp();
+		}
+
+		// Keep config around
+		self.config = config;
+
+		// Build actions
+		self.actions();
+	},
+
  /**
  * Return config fields for web config.
  *
  * @returns      The config fields for the module {Object}
  */
-	config_fields: function() {
+	getConfigFields: function() {
 		let self = this;
 		return [
 			{

@@ -1,11 +1,11 @@
-const { runEntrypoint, InstanceBase, InstanceStatus, tcp } = require('@companion-module/base') 
+const { runEntrypoint, InstanceBase, InstanceStatus } = require('@companion-module/base') 
 const UpgradeScripts = require('./upgrades')
 
 const config = require('./src/config')
 const actions = require('./src/actions')
 const feedbacks = require('./src/feedbacks')
 const variables = require('./src/variables')
-const presets = require('./src/presets')
+// const presets = require('./src/presets')
 
 const utils = require('./src/utils')
 const constants = require('./src/constants');
@@ -20,9 +20,9 @@ class pbInstance extends InstanceBase {
 			...actions,
 			...feedbacks,
 			...variables,
-			...presets,
+			// ...presets,
 			...utils,
-			...constats
+			...constants
 		})
 
 		this.firmwareVersion = '0';
@@ -63,10 +63,10 @@ class pbInstance extends InstanceBase {
 		this.initActions()
 		this.initFeedbacks()
 		this.initVariables()
-		this.initPresets()
+		// this.initPresets()
 
-		this.checkVariables();
-		this.checkFeedbacks();
+		// this.checkVariables();
+		// this.checkFeedbacks();
 
 		this.initTCP();
 	}

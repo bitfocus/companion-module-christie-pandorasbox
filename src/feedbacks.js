@@ -1,5 +1,7 @@
+const { combineRgb } = require('@companion-module/base')
+
 module.exports = {
-	init_feedbacks: function() {
+	initFeedbacks: function() {
 		var self = this;
 
 		var feedbacks = {
@@ -11,37 +13,37 @@ module.exports = {
 						type: 'colorpicker',
 						label: 'Running: Foreground color',
 						id: 'run_fg',
-						default: self.rgb(255,255,255)
+						default: combineRgb(255,255,255)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running: Background color',
 						id: 'run_bg',
-						default: self.rgb(0,100,0)
+						default: combineRgb(0,100,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Paused: Foreground color',
 						id: 'pause_fg',
-						default: self.rgb(255,255,255)
+						default: combineRgb(255,255,255)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Paused: Background color',
 						id: 'pause_bg',
-						default: self.rgb(170,80,0)
+						default: combineRgb(170,80,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Stopped: Foreground color',
 						id: 'stop_fg',
-						default: self.rgb(255,0,0)
+						default: combineRgb(255,0,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Stopped: Background color',
 						id: 'stop_bg',
-						default: self.rgb(0,0,0)
+						default: combineRgb(0,0,0)
 					}
 				],
 				callback: function(feedback, bank) {
@@ -73,37 +75,37 @@ module.exports = {
 						type: 'colorpicker',
 						label: 'Running more than 10 sec : Foreground color',
 						id: 'countdown_fg',
-						default: self.rgb(0,0,0)
+						default: combineRgb(0,0,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running more than 10 sec: Background color',
 						id: 'countdown_bg',
-						default: self.rgb(255,255,0)
+						default: combineRgb(255,255,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running 10 sec or less: Foreground color',
 						id: 'less10_fg',
-						default: self.rgb(255,0,0)
+						default: combineRgb(255,0,0)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running 10 sec or less: Background color',
 						id: 'less10_bg',
-						default: self.rgb(255,153,51)
+						default: combineRgb(255,153,51)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running 5 sec or less: Foreground color',
 						id: 'less05_fg',
-						default: self.rgb(255,255,255)
+						default: combineRgb(255,255,255)
 					},
 					{
 						type: 'colorpicker',
 						label: 'Running 5 sec or less: Background color',
 						id: 'less05_bg',
-						default: self.rgb(255,0,0)
+						default: combineRgb(255,0,0)
 					}
 				],
 				callback: function(feedback, bank) {
@@ -130,5 +132,5 @@ module.exports = {
 		};
 
 		self.setFeedbackDefinitions(feedbacks);
-	};
+	}
 }

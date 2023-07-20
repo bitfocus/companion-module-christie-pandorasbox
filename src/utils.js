@@ -1,8 +1,8 @@
-const { InstanceStatus, TCPHelper } = require('@companion-module/base')
+const { TCPHelper } = require("@companion-module/base");
 
 module.exports = {
-	init_tcp: function() {
-		var self = this;
+	initTCP: function() {
+		let self = this;
 
 		if (self.socket !== undefined) {
 			self.socket.destroy();
@@ -10,23 +10,22 @@ module.exports = {
 		}
 
 		if (self.config.host) {
-			self.socket = new tcp(self.config.host, 6211);
+			self.socket = new TCPHelper(self.config.host, 6211);
 
 			self.socket.on('status_change', function(status, message) {
-				self.status(status, message);
+				self.updateStatus(status, message);
 			});
 
 			self.socket.on('error', function(err) {
-				debug("Network error", err);
-				self.status(self.STATE_ERROR, err);
 				self.log('error',"Network error: " + err.message);
 			});
 
 			self.socket.on('connect', function() {
-				self.status(self.STATE_OK);
-				self.init_variables();
+				self.updateStatus(self.STATE_OK);
+				self.initVariables();
 				//self.init_feedbacks();
-				debug("Connected");
+				// debug("Connected");
+				self.log('debug', 'Connected');
 			})
 
 			self.socket.on('data', function(data) {
@@ -44,10 +43,12 @@ module.exports = {
 		let self = this;
 
 		if (self.isConnected()) {
-			debug('sending', cmd, 'to', self.config.host);
+			// debug('sending', cmd, 'to', self.config.host);
+			var dbg = (String(cmd) + 'to' + String(self.config.host));
+			self.log('debug', )
 			return self.socket.send(cmd);
 		} else {
-			debug('Socket not connected');
+			self.log('debug', 'Socket not connected');
 		}
 
 		return false;
@@ -83,7 +84,7 @@ module.exports = {
 					},30);
 			}
 		} else {
-			debug('Socket not connected');
+			self.log('debug', 'Socket not connected');
 		}
 		return false;
 	},
@@ -98,13 +99,14 @@ module.exports = {
 
 		return self.socket !== undefined && self.socket.connected;
 	},
+
 		/**
 	 * Prepends TCP header and returns complete message
 	 *
 	 * @param {Array}
 	 * @returns {Array}
 	 */
-	PerformanceEventTimingependHeader:  function(body) {
+	prependHeader:  function(body) {
 	    let self = this;
 
 	    let magic = [80, 66, 65, 85]; // PBAU
@@ -130,7 +132,7 @@ module.exports = {
 		return s;
 	},
 
-	intToBy: function(int) {
+	intToBytes: function(int) {
 		return [
 			(int & 0xFF000000) >> 24,
 			(int & 0x00FF0000) >> 16,
@@ -139,14 +141,14 @@ module.exports = {
 		];
 	},
 
-	shortTo: function(int) {
+	shortToBytes: function(int) {
 		return [
 			(int & 0xFF00) >>  8,
 			(int & 0x00FF),
 		];
 	},
 
-	StrNarr: function(str) {
+	StrNarrowToBytes: function(str) {
 		var ch, st, re = [];
 
 		for (var i = 0; i < str.length; i++ ) {
