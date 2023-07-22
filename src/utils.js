@@ -33,6 +33,7 @@ module.exports = {
 			})
 
 			self.socket.on('data', function(data) {
+				self.log('debug', 'Listening for dada.');
 				self.incomingData(data);
 			});
 		}
@@ -54,7 +55,7 @@ module.exports = {
 		if (self.isConnected()) {
 			var dbg = (String(cmd) + 'to' + String(self.config.host));
 			self.log('debug', dbg);
-			return self.socket.send(cmd);
+			return self.socket.sendCmd(cmd);
 		} else {
 			self.log('debug', 'Send: Socket not connected');
 		}
@@ -84,11 +85,11 @@ module.exports = {
 			var gettime_period = 80; // ms
 			self.gettimer_interval = setInterval(gettimer, gettime_period);
 			function gettimer(){
-				self.socket.send(buf1);
+				self.socket.sendCmd(buf1);
 				setTimeout(function() {
-					self.socket.send(buf2);
+					self.socket.sendCmd(buf2);
 					setTimeout(function() {
-						self.socket.send(buf3)},18)
+						self.socket.sendCmd(buf3)},18)
 					},30);
 			}
 		} else {
@@ -204,12 +205,12 @@ module.exports = {
 		var seq_m = '00';
 		var seq_s = '00';
 		var seq_f = '00';
-		var seq_time = '00:00:00:00'
+		var seq_time = '00:00:00:00';
 		var nextq_h = '00';
 		var nextq_m = '00';
 		var nextq_s = '00';
 		var nextq_f = '00';
-		var nextq_time = '00:00:00:00'
+		var nextq_time = '00:00:00:00';
 
 		self.log('debug', 'Processing data.');
 

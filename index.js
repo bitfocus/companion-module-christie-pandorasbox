@@ -17,23 +17,23 @@ class pbInstance extends InstanceBase {
 		// Assign the methods from the listed files to this class
 		Object.assign(this, {
 			...config,
+			...constants,
 			...actions,
 			...feedbacks,
 			...variables,
 			// ...presets,
-			...utils,
-			...constants
+			...utils
 		})
 
-		this.firmwareVersion = '0';
-		this.counter = 0;
+		this.feedbackstate = {
+			seqstate: 'Stop',
+			remainingQtime: 'Normal',
+		}
+
 		this.state = 0;
 
 		this.socket = undefined;
 
-		this.INFO = {};
-
-		this.INTERVAL = undefined;
 	}
 
  	async destroy() {
@@ -43,12 +43,6 @@ class pbInstance extends InstanceBase {
 			self.socket.destroy();
 		}
 
-		if (self.INTERVAL !== undefined) {
-			clearInterval(self.INTERVAL);
-			self.INTERVAL = undefined;
-		}
-	
-		self.requests = {};
 	}
 
 	async init(config) {
@@ -66,7 +60,7 @@ class pbInstance extends InstanceBase {
 		// this.initPresets()
 
 		// this.checkVariables();
-		// this.checkFeedbacks();
+		this.checkFeedbacks();
 
 		this.initTCP();
 	}

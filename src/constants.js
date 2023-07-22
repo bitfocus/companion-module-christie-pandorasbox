@@ -18,8 +18,8 @@ module.exports = {
 	CMD_GET_SEQ_TIME: 73,	
 	CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE: 78,		
 
-	feedbackstate: {
-		seqstate: 'Stop',
-		remainingQtime: 'Normal',
-	},
+	// feedbackstate: {
+	// 	seqstate: 'Stop',
+	// 	remainingQtime: 'Normal',
+	// },
 }

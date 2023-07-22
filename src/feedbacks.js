@@ -47,22 +47,24 @@ module.exports = {
 					}
 				],
 				callback: function(feedback) {
+					let opt = feedback.options;
+				
 					if (self.feedbackstate.seqstate == 'Play') {
 						return {
-							color: feedback.options.run_fg,
-							bgcolor: feedback.options.run_bg
+							color: opt.run_fg,
+							bgcolor: opt.run_bg
 						};
 					}
 					else if (self.feedbackstate.seqstate == 'Pause') {
 						return {
-							color: feedback.options.pause_fg,
-							bgcolor: feedback.options.pause_bg
+							color: opt.pause_fg,
+							bgcolor: opt.pause_bg
 						}
 					}
 					else if (self.feedbackstate.seqstate == 'Stop') {
 						return {
-							color: feedback.options.stop_fg,
-							bgcolor: feedback.options.stop_bg
+							color: opt.stop_fg,
+							bgcolor: opt.stop_bg
 						}
 					}
 				}
@@ -110,22 +112,24 @@ module.exports = {
 					}
 				],
 				callback: function(feedback) {
+					let opt = feedback.options;
+				
 					if (self.feedbackstate.remainingQtime == 'Normal') {
 						return {
-							color: feedback.options.countdown_fg,
-							bgcolor: feedback.options.countdown_bg
+							color: opt.countdown_fg,
+							bgcolor: opt.countdown_bg
 						};
 					}
 					else if (self.feedbackstate.remainingQtime == 'Less10') {
 						return {
-							color: feedback.options.less10_fg,
-							bgcolor: feedback.options.less10_bg
+							color: opt.less10_fg,
+							bgcolor: opt.less10_bg
 						}
 					}
 					else if (self.feedbackstate.remainingQtime == 'Less05') {
 						return {
-							color: feedback.options.less05_fg,
-							bgcolor: feedback.options.less05_bg
+							color: opt.less05_fg,
+							bgcolor: opt.less05_bg
 						}
 					}
 				}
