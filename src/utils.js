@@ -1,4 +1,4 @@
-const { TCPHelper, InstanceStatus } = require("@companion-module/base");
+const { InstanceStatus, TCPHelper} = require("@companion-module/base");
 const constants = require("./constants");
 
 module.exports = {
@@ -15,25 +15,28 @@ module.exports = {
 				self.config.port = constants.PR_PORT;
 			}
 			
-			self.log('info', 'Host: ' + self.config.host + ' Port: ' + self.config.port);
+			self.log('info', 'Setting up Host: ' + self.config.host + ' and Port: ' + self.config.port);
 			self.socket = new TCPHelper(self.config.host, self.config.port);
 
-			self.socket.on('status_change', function(status, message) {
-				self.updateStatus(status, message);
-			});
+			// self.socket.on('status_change', function(status, message) {
+			// 	self.updateStatus(status, message);
+			// });
 
 			self.socket.on('error', function(err) {
 				self.log('error',"Network error: " + err.message);
 			});
 
 			self.socket.on('connect', function() {
-				self.updateStatus(InstanceStatus.Ok, 'Connected');
-				self.initVariables();
-				self.log('info', 'Connected to host ' + self.config.host + ' with domain ' + self.config.domain);
+				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
 			})
 
+			self.socket.on('ready', function() {
+					self.updateStatus(InstanceStatus.Ok, 'Connected');
+					self.log('info', 'Connected to host ' + self.config.host + ' with domain ' + self.config.domain);
+			});
+
 			self.socket.on('data', function(data) {
-				self.log('debug', 'Listening for dada.');
+				self.log('debug', 'Listening for data.');
 				self.incomingData(data);
 			});
 		}
@@ -57,7 +60,7 @@ module.exports = {
 			self.log('debug', dbg);
 			return self.socket.sendCmd(cmd);
 		} else {
-			self.log('debug', 'Send: Socket not connected');
+			self.log('debug', 'Send Cmd: Socket not connected');
 		}
 
 		return false;
@@ -70,13 +73,13 @@ module.exports = {
 		var seqtimeid = gseqid;
 
 		// Create all PBAutomation Commands
-		message1 = self.shortToBytes(constants.CMD_GET_SEQ_TIME)
+		message1 = self.shortToBytes(self.CMD_GET_SEQ_TIME)
 					.concat(self.intToBytes(parseInt(seqtimeid)));
 				buf1 = Buffer.from(self.prependHeader(message1));
-		message2 = self.shortToBytes(constants.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE)
+		message2 = self.shortToBytes(self.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE)
 					.concat(self.intToBytes(parseInt(nextqtimeid)));
 				buf2 = Buffer.from(self.prependHeader(message2));
-		message3 = self.shortToBytes(constants.CMD_GET_SEQ_TRANSPORTMODE)
+		message3 = self.shortToBytes(self.CMD_GET_SEQ_TRANSPORTMODE)
 					.concat(self.intToBytes(parseInt(seqtimeid)));
 				buf3 = Buffer.from(self.prependHeader(message3));
 
@@ -93,7 +96,7 @@ module.exports = {
 					},30);
 			}
 		} else {
-			// self.log('debug', 'Get Timer: Socket not connected');
+			self.log('debug', 'Get Timer: Socket not connected');
 		}
 		return false;
 	},
@@ -121,14 +124,14 @@ module.exports = {
 	    let magic = [80, 66, 65, 85]; // PBAU
 	    let preHeader = [1]; // version number
 
-	    // let domain = self.intToBytes(parseInt(self.config.domain));
+	    let domain = self.intToBytes(parseInt(self.domain));
 	    let postHeader = [
 	        Math.floor(body.length / 256), body.length % 256,
 	        0, 0, 0, 0,
 	        0, // protocol: 0 = TCP
 	    ];
 
-	    let header = preHeader.concat(self.domain).concat(postHeader);
+	    let header = preHeader.concat(domain).concat(postHeader);
 
 	    let checksum = header.reduce((p, c) => p + c, 0) % 256;
 
@@ -180,14 +183,14 @@ module.exports = {
 		var self = this;
 		seqid = changeseqid;
 		CurrentSeqID = changeseqid;
-		CurrentRemeiningSeqID = undefined;
+		CurrentRemeiningSeqID = '';
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
 	updateNextQID: function(changenextqid) {
 		var self = this;
 		nextqid = changenextqid;
-		CurrentSeqID = undefined;
+		CurrentSeqID = '';
 		CurrentRemainingSeqID = changenextqid;
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
@@ -269,7 +272,6 @@ module.exports = {
 					break;
 			}
 		}
-		//self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
-		//debug("Buffer : ", receivebuffer);
+		// self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
 	}
 }

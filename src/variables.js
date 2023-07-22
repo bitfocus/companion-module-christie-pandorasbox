@@ -1,5 +1,3 @@
-const utils = require("./utils");
-
 module.exports = {
 		initVariables: function() {
 		var self = this;
@@ -20,8 +18,8 @@ module.exports = {
 		variables.push({ variableId: 'nextqtime_s', name: 'Time until next Cue (seconds)' });
 		variables.push({ variableId: 'nextqtime_f', name: 'Time until next Cue (frames)' });
 
-		utils.updateNextQID(1);
-		utils.updateSeqID(1);
+		self.updateNextQID(1);
+		self.updateSeqID(1);
 		self.setVariableDefinitions(variables);
 	},
 
