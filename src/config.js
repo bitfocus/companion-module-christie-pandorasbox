@@ -1,6 +1,5 @@
 const { Regex } = require("@companion-module/base");
-const utils = require("./utils");
-const actions = require("./actions");
+const constants = require("./constants");
 
 module.exports = {
  /**
@@ -29,7 +28,7 @@ module.exports = {
 				id: 'port',
 				width: 5,
 				label: 'Port (static): ',
-				value: '6211'
+				value: constants.PR_PORT
 			},
 			{
 				type: 'textinput',
@@ -39,6 +38,6 @@ module.exports = {
 				default: "0",
 				regex: Regex.NUMBER
 			}
-		];
+		]
 	}
 }

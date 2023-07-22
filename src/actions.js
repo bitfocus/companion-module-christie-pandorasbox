@@ -9,7 +9,7 @@ module.exports = {
 		let actions = {};
 
 			actions.seq_transport = {
-				label: 'Sequence Transport',
+				name: 'Sequence Transport',
 				options: [
 					{
 						type: 'dropdown',
@@ -33,7 +33,7 @@ module.exports = {
 			}
 
 			actions.seq_to_cue = {
-				label: 'Goto Cue',
+				name: 'Goto Cue',
 				options: [
 					{
 						type: 'textinput',
@@ -53,7 +53,7 @@ module.exports = {
 			}
 
 			actions.seq_nextlast_cue = {
-				label: 'Goto Next/Last Cue',
+				name: 'Goto Next/Last Cue',
 				options: [
 					{
 						type: 'textinput',
@@ -76,7 +76,7 @@ module.exports = {
 			}
 
 			actions.seq_ignorenextcue = {
-				label: 'Ignore Next CUE on Sequence',
+				name: 'Ignore Next CUE on Sequence',
 				options: [
 					{
 						type: 'textinput',
@@ -99,7 +99,7 @@ module.exports = {
 			}
 
 			actions.seq_selection = {
-				label: 'Select Editing Sequence',
+				name: 'Select Editing Sequence',
 				options: [
 					{
 						type: 'textinput',
@@ -112,7 +112,7 @@ module.exports = {
 			}
 
 			actions.recall_view = {
-				label: 'Recall GUI View',
+				name: 'Recall GUI View',
 				options: [
 					{
 						type: 'textinput',
@@ -124,9 +124,9 @@ module.exports = {
 				]
 			}
 
-			actions.save_project = { label: 'Save PandorasBox Project' },
+			actions.save_project = { name: 'Save PandorasBox Project' },
 			actions.toggle_fullscreenbyid = {
-				label: 'Toggle Fullscreen by SiteID',
+				name: 'Toggle Fullscreen by SiteID',
 				options: [
 					{
 						type: 'textinput',
@@ -139,7 +139,7 @@ module.exports = {
 			}
 
 			actions.set_SiteIPbyid = {
-				label: 'Set the IP Adress of a Site (Client) by its ID',
+				name: 'Set the IP Adress of a Site (Client) by its ID',
 				options: [
 					{
 						type: 'textinput',
@@ -158,9 +158,9 @@ module.exports = {
 				]
 			}
 
-			actions.clear_allactive = { label: 'Clear ALL Active Values' },
+			actions.clear_allactive = { name: 'Clear ALL Active Values' },
 			actions.store_allactive = {
-				label: 'Store ALL Active Values to Sequence',
+				name: 'Store ALL Active Values to Sequence',
 				options: [
 					{
 						type: 'textinput',
@@ -172,10 +172,10 @@ module.exports = {
 				]
 			}
 
-			actions.clear_selection = { label: 'Clear Device Selection' },
-			actions.reset_all = { label: 'Reset All Values to Defaults' },
+			actions.clear_selection = { name: 'Clear Device Selection' },
+			actions.reset_all = { name: 'Reset All Values to Defaults' },
 			actions.get_seq_state =   {
-				label: 'Get State of Sequence',
+				name: 'Get State of Sequence',
 				options: [
 					{
 						type: 'textinput',
@@ -188,7 +188,7 @@ module.exports = {
 			}
 
 			actions.timer_seq_id = {
-				label: 'Change Timer Seq ID',
+				name: 'Change Timer Seq ID',
 				options: [
 					{
 						type: 'textinput',
@@ -201,7 +201,7 @@ module.exports = {
 			}
 
 			actions.nextq_seq_id = {
-				label: 'Change Remaining Cue Time Seq ID',
+				name: 'Change Remaining Cue Time Seq ID',
 				options: [
 					{
 						type: 'textinput',

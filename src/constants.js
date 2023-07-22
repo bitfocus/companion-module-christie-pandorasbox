@@ -1,4 +1,5 @@
 module.exports = {
+	PR_PORT: 6211,
 		//COMMAND IDs
 	CMD_SET_SEQ_TRANSPORT_MODE: 3,
 	CMD_MOVE_SEQ_TO_CUE: 4,

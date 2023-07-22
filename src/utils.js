@@ -1,4 +1,4 @@
-const { TCPHelper } = require("@companion-module/base");
+const { TCPHelper, InstanceStatus } = require("@companion-module/base");
 const constants = require("./constants");
 
 module.exports = {
@@ -11,8 +11,12 @@ module.exports = {
 		}
 
 		if (self.config.host) {
-			// self.socket = new TCPHelper(self.config.host, self.config.port);
-			self.socket = new TCPHelper(self.config.host, 6211);
+			if (!self.config.port) {
+				self.config.port = constants.PR_PORT;
+			}
+			
+			self.log('info', 'Host: ' + self.config.host + ' Port: ' + self.config.port);
+			self.socket = new TCPHelper(self.config.host, self.config.port);
 
 			self.socket.on('status_change', function(status, message) {
 				self.updateStatus(status, message);
@@ -23,10 +27,9 @@ module.exports = {
 			});
 
 			self.socket.on('connect', function() {
-				self.updateStatus(self.STATE_OK);
+				self.updateStatus(InstanceStatus.Ok, 'Connected');
 				self.initVariables();
-				//self.init_feedbacks();
-				self.log('debug', 'Connected');
+				self.log('info', 'Connected to host ' + self.config.host + ' with domain ' + self.config.domain);
 			})
 
 			self.socket.on('data', function(data) {
@@ -45,7 +48,7 @@ module.exports = {
 	 * @param cmd {Buffer}
 	 * @returns {boolean}
 	 */
-	send: function(cmd) {
+	sendCmd: function(cmd) {
 		let self = this;
 
 		if (self.isConnected()) {
@@ -59,7 +62,7 @@ module.exports = {
 		return false;
 	},
 
-	send_getTimer: function(gseqid, gnextqseqid) {
+	sendGetTimer: function(gseqid, gnextqseqid) {
 		let self = this;
 		var gettimer;
 		var nextqtimeid = gnextqseqid;
@@ -153,7 +156,7 @@ module.exports = {
 		];
 	},
 
-	StrNarrowToBytes: function(str) {
+	strNarrowToBytes: function(str) {
 		var ch, st, re = [];
 
 		for (var i = 0; i < str.length; i++ ) {
@@ -177,7 +180,7 @@ module.exports = {
 		seqid = changeseqid;
 		CurrentSeqID = changeseqid;
 		CurrentRemeiningSeqID = undefined;
-		self.send_getTimer(CurrentSeqID, CurrentRemainingSeqID);
+		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
 	updateNextQID: function(changenextqid) {
@@ -185,7 +188,7 @@ module.exports = {
 		nextqid = changenextqid;
 		CurrentSeqID = undefined;
 		CurrentRemainingSeqID = changenextqid;
-		self.send_getTimer(CurrentSeqID, CurrentRemainingSeqID);
+		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
 	incomingData: function(data) {
@@ -207,6 +210,8 @@ module.exports = {
 		var nextq_s = '00';
 		var nextq_f = '00';
 		var nextq_time = '00:00:00:00'
+
+		self.log('debug', 'Processing data.');
 
 		if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
 			rcv_cmd_id = receivebuffer.readInt16BE(17);

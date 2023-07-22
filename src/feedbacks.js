@@ -2,11 +2,11 @@ const { combineRgb } = require('@companion-module/base')
 
 module.exports = {
 	initFeedbacks: function() {
-		var self = this;
+		let self = this;
+		let feedbacks = {};
 
-		var feedbacks = {
-			state_color: {
-				label: 'Change color from Sequence State',
+		feedbacks.state_color = {
+				name: 'Change color from Sequence State',
 				description: 'Change the colors of a bank according to the Seq state',
 				options: [
 					{
@@ -46,7 +46,7 @@ module.exports = {
 						default: combineRgb(0,0,0)
 					}
 				],
-				callback: function(feedback, bank) {
+				callback: function(feedback) {
 					if (self.feedbackstate.seqstate == 'Play') {
 						return {
 							color: feedback.options.run_fg,
@@ -66,9 +66,10 @@ module.exports = {
 						}
 					}
 				}
-			},
-			next_Q_color: {
-				label: 'Change color depending on Cue remaining Time',
+			}
+
+			feedbacks.next_Q_color = {
+				name: 'Change color depending on Cue remaining Time',
 				description: 'Change the colors of a bank according to the Time until next Cue',
 				options: [
 					{
@@ -108,7 +109,7 @@ module.exports = {
 						default: combineRgb(255,0,0)
 					}
 				],
-				callback: function(feedback, bank) {
+				callback: function(feedback) {
 					if (self.feedbackstate.remainingQtime == 'Normal') {
 						return {
 							color: feedback.options.countdown_fg,
@@ -129,7 +130,6 @@ module.exports = {
 					}
 				}
 			}
-		};
 
 		self.setFeedbackDefinitions(feedbacks);
 	}
