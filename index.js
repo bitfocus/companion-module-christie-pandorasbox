@@ -56,11 +56,11 @@ class pbInstance extends InstanceBase {
 		
 		this.initActions()
 		this.initFeedbacks()
-		this.initVariables()
+		// this.initVariables()
 		// this.initPresets()
 
 		// this.checkVariables();
-		this.checkFeedbacks();
+		// this.checkFeedbacks();
 
 		this.initTCP();
 	}

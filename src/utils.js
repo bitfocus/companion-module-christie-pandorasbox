@@ -32,7 +32,8 @@ module.exports = {
 
 			self.socket.on('ready', function() {
 					self.updateStatus(InstanceStatus.Ok, 'Connected');
-					self.log('info', 'Connected to host ' + self.config.host + ' with domain ' + self.config.domain);
+					self.initVariables();
+					self.log('info', 'Connected to host ' + self.config.host);
 			});
 
 			self.socket.on('data', function(data) {
