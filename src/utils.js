@@ -28,7 +28,7 @@ module.exports = {
 
 			self.socket.on('connect', function() {
 				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
-			})
+			});
 
 			self.socket.on('ready', function() {
 					self.updateStatus(InstanceStatus.Ok, 'Connected');
@@ -183,7 +183,7 @@ module.exports = {
 		var self = this;
 		seqid = changeseqid;
 		CurrentSeqID = changeseqid;
-		CurrentRemeiningSeqID = '';
+		CurrentRemainingSeqID = '';
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
