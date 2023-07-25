@@ -37,7 +37,7 @@ module.exports = {
 				variableObj['seqstate'] = self.INFO['seqstate'];
 			}
 		}
-		catch(errot) {
+		catch(error) {
 			self.log('error', 'Error Processing Variables: ' + String(error));
 		}
 	},

@@ -40,10 +40,6 @@ module.exports = {
 				self.incomingData(data);
 			});
 		}
-
-		if (self.config.domain) {
-			self.domain = self.intToBytes(parseInt(self.config.domain));
-		}
 	},
 
 
@@ -124,7 +120,7 @@ module.exports = {
 	    let magic = [80, 66, 65, 85]; // PBAU
 	    let preHeader = [1]; // version number
 
-	    let domain = self.intToBytes(parseInt(self.domain));
+	    let domain = self.intToBytes(parseInt(self.config.domain));
 	    let postHeader = [
 	        Math.floor(body.length / 256), body.length % 256,
 	        0, 0, 0, 0,
@@ -183,14 +179,14 @@ module.exports = {
 		var self = this;
 		seqid = changeseqid;
 		CurrentSeqID = changeseqid;
-		CurrentRemainingSeqID = '';
+		CurrentRemainingSeqID = 0;
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
 	updateNextQID: function(changenextqid) {
 		var self = this;
 		nextqid = changenextqid;
-		CurrentSeqID = '';
+		CurrentSeqID = 1;
 		CurrentRemainingSeqID = changenextqid;
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
