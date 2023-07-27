@@ -1,5 +1,5 @@
-const { InstanceStatus, TCPHelper} = require("@companion-module/base");
-const constants = require("./constants");
+const { InstanceStatus, TCPHelper } = require('@companion-module/base')
+const constants = require('./constants')
 
 module.exports = {
 	initTCP: function() {
@@ -9,32 +9,27 @@ module.exports = {
 			self.socket.destroy();
 			delete self.socket;
 		}
+		self.updateStatus(InstanceStatus.Connecting)
 
 		if (self.config.host) {
-			if (!self.config.port) {
-				self.config.port = constants.PR_PORT;
-			}
-			
-			self.log('info', 'Setting up Host: ' + self.config.host + ' and Port: ' + self.config.port);
-			self.socket = new TCPHelper(self.config.host, self.config.port);
+						
+			self.log('info', 'Setting up Host: ' + self.config.host + ' and Port: ' + constants.PR_PORT);
+			self.socket = new TCPHelper(self.config.host, constants.PR_PORT);
 
-			// self.socket.on('status_change', function(status, message) {
-			// 	self.updateStatus(status, message);
-			// });
+			self.socket.on('status_change', function(status, message) {
+				self.updateStatus(status, message);
+			 })
 
 			self.socket.on('error', function(err) {
 				self.log('error',"Network error: " + err.message);
-			});
+			})
 
 			self.socket.on('connect', function() {
 				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
-			});
-
-			self.socket.on('ready', function() {
-					self.updateStatus(InstanceStatus.Ok, 'Connected');
-					self.initVariables();
-					self.log('info', 'Connected to host ' + self.config.host);
-			});
+				self.updateStatus(InstanceStatus.Ok, 'Connected');
+				self.log('info', 'Connected to host ' + self.config.host);
+				//self.initVariables();
+			})
 
 			self.socket.on('data', function(data) {
 				self.log('debug', 'Listening for data.');
@@ -49,18 +44,12 @@ module.exports = {
 	 * @param cmd {Buffer}
 	 * @returns {boolean}
 	 */
-	sendCmd: function(cmd) {
+	sendCmd: function (cmd) {
 		let self = this;
 
-		if (self.isConnected()) {
-			var dbg = (String(cmd) + 'to' + String(self.config.host));
-			self.log('debug', dbg);
-			return self.socket.sendCmd(cmd);
-		} else {
-			self.log('debug', 'Send Cmd: Socket not connected');
-		}
-
-		return false;
+		var dbg = ('Sending ' + String(cmd) + ' to ' + String(self.config.host));
+		self.log('debug', dbg);
+		return self.socket.send(cmd);
 	},
 
 	sendGetTimer: function(gseqid, gnextqseqid) {
@@ -80,21 +69,17 @@ module.exports = {
 					.concat(self.intToBytes(parseInt(seqtimeid)));
 				buf3 = Buffer.from(self.prependHeader(message3));
 
-		if (self.isConnected()) {
-			clearInterval(self.gettimer_interval);
-			var gettime_period = 80; // ms
-			self.gettimer_interval = setInterval(gettimer, gettime_period);
-			function gettimer(){
-				self.socket.sendCmd(buf1);
+		clearInterval(self.gettimer_interval);
+		var gettime_period = 80; // ms
+		self.gettimer_interval = setInterval(gettimer, gettime_period);
+		function gettimer(){
+				self.sendCmd(buf1);
 				setTimeout(function() {
-					self.socket.sendCmd(buf2);
+					self.sendCmd(buf2);
 					setTimeout(function() {
-						self.socket.sendCmd(buf3)},18)
+						self.sendCmd(buf3)},18)
 					},30);
 			}
-		} else {
-			self.log('debug', 'Get Timer: Socket not connected');
-		}
 		return false;
 	},
 
@@ -269,6 +254,6 @@ module.exports = {
 					break;
 			}
 		}
-		// self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
+		 self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
 	}
 }

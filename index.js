@@ -1,14 +1,13 @@
-const { runEntrypoint, InstanceBase, InstanceStatus } = require('@companion-module/base') 
-
-const actions = require('./src/actions')
-const config = require('./src/config')
-const constants = require('./src/constants');
-const feedbacks = require('./src/feedbacks')
-// const presets = require('./src/presets')
+const { InstanceBase, InstanceStatus, runEntrypoint } = require('@companion-module/base')
 const UpgradeScripts = require('./src/upgrades')
+const config = require('./src/config')
+const constants = require('./src/constants')
+const actions = require('./src/actions')
+const upgrade= require('./src/upgrades.js')
+const feedbacks = require('./src/feedbacks')
+//const presets = require('./src/presets')
 const utils = require('./src/utils')
 const variables = require('./src/variables')
-
 
 class pbInstance extends InstanceBase {
 	constructor(internal) {
@@ -22,7 +21,7 @@ class pbInstance extends InstanceBase {
 			...feedbacks,
 			...variables,
 			// ...presets,
-			...utils
+			...utils,
 		})
 
 		this.feedbackstate = {
@@ -30,10 +29,13 @@ class pbInstance extends InstanceBase {
 			remainingQtime: 'Normal',
 		}
 
-		this.state = 0;
+		this.state = 0
 
-		this.socket = undefined;
+		this.socket = undefined
 
+	}
+	async init(config) {
+		this.configUpdated(config)
 	}
 
  	async destroy() {
@@ -45,15 +47,9 @@ class pbInstance extends InstanceBase {
 
 	}
 
-	async init(config) {
-		this.configUpdated(config)
-	}
-
 	async configUpdated(config) {
 		this.config = config
-	
-		this.updateStatus(InstanceStatus.Connecting);
-		
+		this.updateStatus(InstanceStatus.Connecting)
 		this.initActions()
 		this.initFeedbacks()
 		// this.initVariables()
@@ -61,9 +57,8 @@ class pbInstance extends InstanceBase {
 
 		// this.checkVariables();
 		// this.checkFeedbacks();
-
-		this.initTCP();
+		this.initTCP()
 	}
 }
 
-runEntrypoint(pbInstance, UpgradeScripts);
+runEntrypoint(pbInstance, UpgradeScripts)

@@ -40,5 +40,5 @@ module.exports = {
 		catch(error) {
 			self.log('error', 'Error Processing Variables: ' + String(error));
 		}
-	},
+	}
 }
