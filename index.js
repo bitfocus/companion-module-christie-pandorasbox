@@ -52,11 +52,11 @@ class pbInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Connecting)
 		this.initActions()
 		this.initFeedbacks()
-		// this.initVariables()
+		this.initVariables() // we initalise those when the connection is established.^
 		// this.initPresets()
 
 		// this.checkVariables();
-		// this.checkFeedbacks();
+		this.checkFeedbacks();
 		this.initTCP()
 	}
 }

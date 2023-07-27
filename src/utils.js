@@ -4,6 +4,7 @@ const constants = require('./constants')
 module.exports = {
 	initTCP: function() {
 		let self = this;
+		var run_once = false;
 
 		if (self.socket !== undefined) {
 			self.socket.destroy();
@@ -28,11 +29,14 @@ module.exports = {
 				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
 				self.updateStatus(InstanceStatus.Ok, 'Connected');
 				self.log('info', 'Connected to host ' + self.config.host);
-				//self.initVariables();
+				// self.initVariables();
 			})
 
 			self.socket.on('data', function(data) {
-				self.log('debug', 'Listening for data.');
+				if (!run_once) {
+					self.log('debug', 'Listening for data.');
+					run_once = true;
+				};	
 				self.incomingData(data);
 			});
 		}
@@ -48,7 +52,7 @@ module.exports = {
 		let self = this;
 
 		var dbg = ('Sending ' + String(cmd) + ' to ' + String(self.config.host));
-		self.log('debug', dbg);
+		// self.log('debug', dbg);
 		return self.socket.send(cmd);
 	},
 
@@ -163,7 +167,7 @@ module.exports = {
 
 	updateSeqID: function(changeseqid) {
 		var self = this;
-		seqid = changeseqid;
+		self.seqid = changeseqid;
 		CurrentSeqID = changeseqid;
 		CurrentRemainingSeqID = 0;
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
@@ -171,18 +175,20 @@ module.exports = {
 
 	updateNextQID: function(changenextqid) {
 		var self = this;
-		nextqid = changenextqid;
+		self.nextqid = changenextqid;
 		CurrentSeqID = 1;
 		CurrentRemainingSeqID = changenextqid;
 		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
 	},
 
 	incomingData: function(data) {
-		var self = this;
+		let self = this;
 
 		let magic = 'PBAU';
 		let domain = parseInt(self.config.domain);	
 		var receivebuffer = data;
+
+		let variableObj = {};
 
 		var rcv_cmd_id = 0;
 		var seq_state = 0;
@@ -197,7 +203,7 @@ module.exports = {
 		var nextq_f = '00';
 		var nextq_time = '00:00:00:00';
 
-		self.log('debug', 'Processing data.');
+		// self.log('debug', 'Processing data.');
 
 		if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
 			rcv_cmd_id = receivebuffer.readInt16BE(17);
@@ -207,13 +213,13 @@ module.exports = {
 					seq_state = receivebuffer.readInt32BE(19);
 					if (seq_state == 1){	
 						self.feedbackstate.seqstate = 'Play';
-						seqstate = 'Play';
+						self.seqstate = 'Play';
 					} else if (seq_state == 2) {	
 						self.feedbackstate.seqstate = 'Stop';
-						seqstate = 'Stop';
+						self.seqstate = 'Stop';
 					} else if (seq_state == 3) {	
 						self.feedbackstate.seqstate = 'Pause';
-						seqstate = 'Pause';
+						self.seqstate = 'Pause';
 					};
 					self.checkFeedbacks('state_color');
 					break;
@@ -224,11 +230,11 @@ module.exports = {
 					seq_s = receivebuffer.readInt32BE(27);
 					seq_f = receivebuffer.readInt32BE(31);
 
-					seqtime_h = self.padZero(2,seq_h);
-					seqtime_m = self.padZero(2,seq_m);
-					seqtime_s = self.padZero(2,seq_s);
-					seqtime_f = self.padZero(2,seq_f);
-					seqtime = self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f);
+					self.seqtime_h = self.padZero(2,seq_h);
+					self.seqtime_m = self.padZero(2,seq_m);
+					self.seqtime_s = self.padZero(2,seq_s);
+					self.seqtime_f = self.padZero(2,seq_f);
+					self.seqtime   = self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f);
 					break;
 
 				case 78 :
@@ -237,11 +243,11 @@ module.exports = {
 					nextq_s = receivebuffer.readInt32BE(27);
 					nextq_f = receivebuffer.readInt32BE(31);
 
-					nextqtime_h = self.padZero(2,nextq_h);
-					nextqtime_m = self.padZero(2,nextq_m);
-					nextqtime_s = self.padZero(2,nextq_s);
-					nextqtime_f = self.padZero(2,nextq_f);
-					nextqtime = self.padZero(2,nextq_h) +':'+self.padZero(2,nextq_m)+':'+self.padZero(2,nextq_s)+':'+self.padZero(2,nextq_f);
+					self.nextqtime_h = self.padZero(2,nextq_h);
+					self.nextqtime_m = self.padZero(2,nextq_m);
+					self.nextqtime_s = self.padZero(2,nextq_s);
+					self.nextqtime_f = self.padZero(2,nextq_f);
+					self.nextqtime   = self.padZero(2,nextq_h) +':'+self.padZero(2,nextq_m)+':'+self.padZero(2,nextq_s)+':'+self.padZero(2,nextq_f);
 
 					if (nextq_h == 0 && nextq_m == 0 && nextq_s < 5) {
 						self.feedbackstate.remainingQtime = 'Less05';
@@ -254,6 +260,6 @@ module.exports = {
 					break;
 			}
 		}
-		 self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
+		 // self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
 	}
 }
