@@ -6,6 +6,7 @@ module.exports = {
 		let feedbacks = {};
 
 		feedbacks.state_color = {
+				type: 'advanced',
 				name: 'Change color from Sequence State',
 				description: 'Change the colors of a bank according to the Seq state',
 				options: [
@@ -70,7 +71,8 @@ module.exports = {
 				}
 			}
 
-			feedbacks.next_Q_color = {
+		feedbacks.next_Q_color = {
+				type: 'advanced',
 				name: 'Change color depending on Cue remaining Time',
 				description: 'Change the colors of a bank according to the Time until next Cue',
 				options: [

@@ -78,12 +78,13 @@ module.exports = {
 		self.gettimer_interval = setInterval(gettimer, gettime_period);
 		function gettimer(){
 				self.sendCmd(buf1);
-				setTimeout(function() {
+				setTimeout(function () {
 					self.sendCmd(buf2);
-					setTimeout(function() {
-						self.sendCmd(buf3)},18)
-					},30);
-			}
+					setTimeout(function () {
+						self.sendCmd(buf3)
+						}, 18)
+					}, 30);
+				}
 		return false;
 	},
 
@@ -183,8 +184,7 @@ module.exports = {
 
 	incomingData: function(data) {
 		let self = this;
-
-		let magic = 'PBAU';
+		let magic = 'PBAU'; 
 		let domain = parseInt(self.config.domain);	
 		var receivebuffer = data;
 
@@ -207,13 +207,13 @@ module.exports = {
 
 		if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
 			rcv_cmd_id = receivebuffer.readInt16BE(17);
-
 			switch (rcv_cmd_id) {
 				case 72 :
 					seq_state = receivebuffer.readInt32BE(19);
 					if (seq_state == 1){	
 						self.feedbackstate.seqstate = 'Play';
 						self.seqstate = 'Play';
+						self.log('debug', 'Seq State ' + self.seqstate);
 					} else if (seq_state == 2) {	
 						self.feedbackstate.seqstate = 'Stop';
 						self.seqstate = 'Stop';
