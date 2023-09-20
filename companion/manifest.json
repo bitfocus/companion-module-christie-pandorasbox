@@ -1,0 +1,35 @@
+{
+	"id": "christie-pandorasbox",
+	"name": "christie-pandorasbox",
+	"shortname": "christie-pb",
+	"description": "Module to control Christie Pandoras Box Media Servers",
+	"version": "3.0.0",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-christie-pandorasbox.git",
+	"bugs": "https://github.com/bitfocus/companion-module-christie-pandorasbox/issues",
+	"maintainers": [
+		{
+			"name": "Daniel Kaminski",
+			"email": "daniel@dk-production.de"
+		},
+		{
+			"name": "VideoBSO (Johannes Mayrhofer)",
+			"email": "video@staatsoper.de"
+		}
+	],
+	"legacyIds": [],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "2.0.0",
+		"entrypoint": "../index.js"
+	},
+	"manufacturer": "Christie Digital Systems",
+	"products": [
+		"Pandoras Box"
+	],
+	"keywords": [
+		"Media Server"
+	],
+	"homepage": "https://github.com/bitfocus/companion-module-christie-pandorasbox#readme"
+}
