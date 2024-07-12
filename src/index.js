@@ -1,13 +1,13 @@
 const { InstanceBase, InstanceStatus, runEntrypoint } = require('@companion-module/base')
-const UpgradeScripts = require('./src/upgrades')
-const config = require('./src/config')
-const constants = require('./src/constants')
-const actions = require('./src/actions')
-const upgrade= require('./src/upgrades.js')
-const feedbacks = require('./src/feedbacks')
-//const presets = require('./src/presets')
-const utils = require('./src/utils')
-const variables = require('./src/variables')
+const UpgradeScripts = require('./upgrades')
+const config = require('./config')
+const constants = require('./constants')
+const actions = require('./actions')
+const upgrade= require('./upgrades.js')
+const feedbacks = require('./feedbacks')
+//const presets = require('./presets')
+const utils = require('./utils')
+const variables = require('./variables')
 
 class pbInstance extends InstanceBase {
 	constructor(internal) {
