@@ -21,24 +21,29 @@ module.exports = {
 		self.updateNextQID(1);
 		self.updateSeqID(1);
 		self.setVariableDefinitions(variables);
+
+		self.log('debug', 'Variables initiated')
 	},
 
 	checkVariables: function () {
 		let self = this;
+		self.INFO = {}
 
 		let variableObj = {};
 
 		try {
 			if ('seqid' in self.INFO) {
 				variableObj['seqid'] = self.INFO['seqid'];
+				self.log('debug', "seqid OK")
 			}
 
 			if ('seqstate' in self.INFO) {
 				variableObj['seqstate'] = self.INFO['seqstate'];
+				self.log('debug', "seqstate OK")
 			}
 		}
 		catch(error) {
 			self.log('error', 'Error Processing Variables: ' + String(error));
 		}
-	}
+	},
 }

@@ -55,7 +55,7 @@ class pbInstance extends InstanceBase {
 		this.initVariables() // we initalise those when the connection is established.^
 		// this.initPresets()
 
-		// this.checkVariables();
+		this.checkVariables();
 		this.checkFeedbacks();
 		this.initTCP()
 	}

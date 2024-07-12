@@ -29,7 +29,7 @@ module.exports = {
 				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
 				self.updateStatus(InstanceStatus.Ok, 'Connected');
 				self.log('info', 'Connected to host ' + self.config.host);
-				// self.initVariables();
+				self.initVariables();
 			})
 
 			self.socket.on('data', function(data) {
@@ -51,9 +51,9 @@ module.exports = {
 	sendCmd: function (cmd) {
 		let self = this;
 
-		var dbg = ('Sending ' + String(cmd) + ' to ' + String(self.config.host));
+		// var dbg = ('Sending ' + String(cmd) + ' to ' + String(self.config.host));
 		// self.log('debug', dbg);
-		if (self.socket && self.socket.isConnected) {
+		if (self.socket !== undefined && self.socket.isConnected) {
 			self.socket.send(cmd);
 		}
 	},
@@ -88,17 +88,6 @@ module.exports = {
 					}, 30);
 				}
 		return false;
-	},
-
-	/**
-	 * Returns if the socket is connected.
-	 *
-	 * @returns If the socket is connected {boolean}
-	 */
-	isConnected: function() {
-		let self = this;
-
-		return self.socket !== undefined && self.socket.connected;
 	},
 
 		/**
@@ -171,17 +160,19 @@ module.exports = {
 	updateSeqID: function(changeseqid) {
 		var self = this;
 		self.seqid = changeseqid;
-		CurrentSeqID = changeseqid;
-		CurrentRemainingSeqID = 0;
-		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
+		let currentSeqID = self.seqid;
+		let currentRemainingSeqID = 0;
+		self.log('debug', "updated Seq ID " + currentSeqID + " with remaining " + currentRemainingSeqID)
+		self.sendGetTimer(currentSeqID, currentRemainingSeqID);
 	},
 
 	updateNextQID: function(changenextqid) {
 		var self = this;
 		self.nextqid = changenextqid;
-		CurrentSeqID = 1;
-		CurrentRemainingSeqID = changenextqid;
-		self.sendGetTimer(CurrentSeqID, CurrentRemainingSeqID);
+		let currentSeqID = self.seqid;
+		let currentRemainingSeqID = self.nextqid;
+		self.log('debug', "updated Cue ID " + currentSeqID + " with remaining " + currentRemainingSeqID)
+		self.sendGetTimer(self.seqid, currentRemainingSeqID);
 	},
 
 	incomingData: function(data) {
@@ -189,8 +180,6 @@ module.exports = {
 		let magic = 'PBAU'; 
 		let domain = parseInt(self.config.domain);	
 		var receivebuffer = data;
-
-		let variableObj = {};
 
 		var rcv_cmd_id = 0;
 		var seq_state = 0;
@@ -224,6 +213,11 @@ module.exports = {
 						self.seqstate = 'Pause';
 					};
 					self.checkFeedbacks('state_color');
+					self.setVariableValues({
+						'seqid': self.seqID,
+						'seqstate': self.seqstate,
+						'nextqid': self.nextqid,
+					})
 					break;
 
 				case 73 :
@@ -237,9 +231,18 @@ module.exports = {
 					self.seqtime_s = self.padZero(2,seq_s);
 					self.seqtime_f = self.padZero(2,seq_f);
 					self.seqtime   = self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f);
+
+					self.setVariableValues({
+						'seqtime': self.seqtime,
+						'seqtime_h': self.seqtime_h,
+						'seqtime_m': self.seqtime_m,
+						'seqtime_s': self.seqtime_s,
+						'seqtime_f': self.seqtime_f,
+					})
 					break;
 
 				case 78 :
+					self.log('debug',"checkpoint")
 					nextq_h = receivebuffer.readInt32BE(19);
 					nextq_m = receivebuffer.readInt32BE(23);
 					nextq_s = receivebuffer.readInt32BE(27);
@@ -259,9 +262,18 @@ module.exports = {
 						self.feedbackstate.remainingQtime = 'Normal';
 					};
 					self.checkFeedbacks('next_Q_color');
+
+					self.setVariableValues({
+						'nextqtime': self.nextqtime,
+						'nextqtime_h': self.nextqtime_h,
+						'nextqtime_m': self.nextqtime_m,
+						'nextqtime_s': self.nextqtime_s,
+						'nextqtime_f': self.nextqtime_f,
+					})
+					self.log('debug', "received netxq TC")
 					break;
 			}
 		}
-		 // self.log("Buffer : " + receivebuffer + " - " + rcv_cmd_id);
+			// self.log('info', "Buffer : " + receivebuffer + " - " + rcv_cmd_id);
 	}
 }

@@ -385,21 +385,4 @@ module.exports = {
 
 		self.setActionDefinitions(actions);
 	},
-
- /**
- * Executes the action and sends the TCP packet to Pandoras Box
- *
- * @param action      The action to perform
- */
-action: function (action) {
-		let self = this;
-    	var opt = action.options;
-
-		let buf = undefined;
-		let message = '';
-
-		if (buf !== undefined) {
-		 	self.sendCmd(buf);
-		}
-	}
 }
