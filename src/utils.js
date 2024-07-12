@@ -53,10 +53,12 @@ module.exports = {
 
 		var dbg = ('Sending ' + String(cmd) + ' to ' + String(self.config.host));
 		// self.log('debug', dbg);
-		return self.socket.send(cmd);
+		if (self.socket && self.socket.isConnected) {
+			self.socket.send(cmd);
+		}
 	},
 
-	sendGetTimer: function(gseqid, gnextqseqid) {
+	sendGetTimer: function (gseqid, gnextqseqid) {
 		let self = this;
 		var gettimer;
 		var nextqtimeid = gnextqseqid;
