@@ -1,9 +1,7 @@
-const { InstanceBase, InstanceStatus, runEntrypoint } = require('@companion-module/base')
-const UpgradeScripts = require('./upgrades')
+const { InstanceBase, InstanceStatus, runEntrypoint, EmptyUpgradeScript } = require('@companion-module/base')
 const config = require('./config')
 const constants = require('./constants')
 const actions = require('./actions')
-const upgrade= require('./upgrades.js')
 const feedbacks = require('./feedbacks')
 //const presets = require('./presets')
 const utils = require('./utils')
@@ -62,4 +60,4 @@ class pbInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(pbInstance, UpgradeScripts)
+runEntrypoint(pbInstance, EmptyUpgradeScript)

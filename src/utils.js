@@ -165,12 +165,12 @@ module.exports = {
 		var seq_m = '00';
 		var seq_s = '00';
 		var seq_f = '00';
-		var seq_time = '00:00:00:00';
+		// var seq_time = '00:00:00:00';
 		var nextq_h = '00';
 		var nextq_m = '00';
 		var nextq_s = '00';
 		var nextq_f = '00';
-		var nextq_time = '00:00:00:00';
+		// var nextq_time = '00:00:00:00';
 
 		// self.log('debug', 'Processing data.');
 
@@ -189,9 +189,7 @@ module.exports = {
 						self.feedbackstate.seqstate = 'Pause';
 						self.seqstate = 'Pause';
 					};
-					self.setVariableValues({
-						'seqstate': self.seqstate,
-					});
+					self.setVariableValues({ 'seqstate': self.seqstate, });
 					self.checkFeedbacks('state_color');
 					break;
 				case constants.CMD_GET_SEQ_TIME : 
