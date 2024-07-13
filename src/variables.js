@@ -18,11 +18,31 @@ module.exports = {
 		variables.push({ variableId: 'nextqtime_s', name: 'Time until next Cue (seconds)' });
 		variables.push({ variableId: 'nextqtime_f', name: 'Time until next Cue (frames)' });
 
-		self.updateNextQID(1);
-		self.updateSeqID(1);
 		self.setVariableDefinitions(variables);
 
+		self.updateNextQID(1);
+		self.updateSeqID(1);
 		self.log('debug', 'Variables initiated')
+	},
+
+	updateSeqID: function(changeseqid) {
+		var self = this;
+		self.seqid = changeseqid;
+		currentSeqID = self.seqid;
+		currentRemainingSeqID = self.nextqid;
+		self.setVariableValues({ 'seqid': currentSeqID, });
+		self.log('debug', "updated Seq ID " + currentSeqID);
+		self.sendGetTimer(currentSeqID, currentRemainingSeqID);
+	},
+
+	updateNextQID: function(changenextqid) {
+		var self = this;
+		self.nextqid = changenextqid;
+		currentSeqID = self.seqid;
+		currentRemainingSeqID = self.nextqid;
+		self.setVariableValues({ 'nextqid': currentRemainingSeqID, });
+		self.log('debug', "updated remaining " + currentRemainingSeqID);
+		self.sendGetTimer(currentSeqID, currentRemainingSeqID);
 	},
 
 	checkVariables: function () {
@@ -45,5 +65,5 @@ module.exports = {
 		catch(error) {
 			self.log('error', 'Error Processing Variables: ' + String(error));
 		}
-	},
+	}
 }

@@ -1,6 +1,6 @@
 module.exports = {
 	PR_PORT: 6211,
-		//COMMAND IDs
+	//COMMAND IDs
 	CMD_SET_SEQ_TRANSPORT_MODE: 3,
 	CMD_MOVE_SEQ_TO_CUE: 4,
 	CMD_MOVE_SEQ_TO_LASTNEXTCUE: 7,
@@ -17,9 +17,4 @@ module.exports = {
 	CMD_GET_SEQ_TRANSPORTMODE: 72,
 	CMD_GET_SEQ_TIME: 73,	
 	CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE: 78,		
-
-	// feedbackstate: {
-	// 	seqstate: 'Stop',
-	// 	remainingQtime: 'Normal',
-	// },
 }

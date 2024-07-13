@@ -43,6 +43,7 @@ class pbInstance extends InstanceBase {
 
 		if (self.socket !== undefined) {
 			self.socket.destroy();
+			delete self.socket;
 		}
 
 	}
@@ -52,7 +53,7 @@ class pbInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Connecting)
 		this.initActions()
 		this.initFeedbacks()
-		this.initVariables() // we initalise those when the connection is established.^
+		this.initVariables()
 		// this.initPresets()
 
 		this.checkVariables();

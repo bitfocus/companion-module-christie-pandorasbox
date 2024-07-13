@@ -6,10 +6,6 @@ module.exports = {
 		let self = this;
 		var run_once = false;
 
-		if (self.socket !== undefined) {
-			self.socket.destroy();
-			delete self.socket;
-		}
 		self.updateStatus(InstanceStatus.Connecting)
 
 		if (self.config.host) {
@@ -29,7 +25,7 @@ module.exports = {
 				self.log('info', 'Connecting to host ' + self.config.host + ' with domain ' + self.config.domain);
 				self.updateStatus(InstanceStatus.Ok, 'Connected');
 				self.log('info', 'Connected to host ' + self.config.host);
-				self.initVariables();
+				// self.initVariables();
 			})
 
 			self.socket.on('data', function(data) {
@@ -157,24 +153,6 @@ module.exports = {
 			return re;
 	},
 
-	updateSeqID: function(changeseqid) {
-		var self = this;
-		self.seqid = changeseqid;
-		let currentSeqID = self.seqid;
-		let currentRemainingSeqID = 0;
-		self.log('debug', "updated Seq ID " + currentSeqID + " with remaining " + currentRemainingSeqID)
-		self.sendGetTimer(currentSeqID, currentRemainingSeqID);
-	},
-
-	updateNextQID: function(changenextqid) {
-		var self = this;
-		self.nextqid = changenextqid;
-		let currentSeqID = self.seqid;
-		let currentRemainingSeqID = self.nextqid;
-		self.log('debug', "updated Cue ID " + currentSeqID + " with remaining " + currentRemainingSeqID)
-		self.sendGetTimer(self.seqid, currentRemainingSeqID);
-	},
-
 	incomingData: function(data) {
 		let self = this;
 		let magic = 'PBAU'; 
@@ -199,12 +177,11 @@ module.exports = {
 		if (receivebuffer.toString('utf8',0,4) == magic && receivebuffer.readInt32BE(5) == domain) {
 			rcv_cmd_id = receivebuffer.readInt16BE(17);
 			switch (rcv_cmd_id) {
-				case 72 :
+				case constants.CMD_GET_SEQ_TRANSPORTMODE : 
 					seq_state = receivebuffer.readInt32BE(19);
 					if (seq_state == 1){	
 						self.feedbackstate.seqstate = 'Play';
 						self.seqstate = 'Play';
-						self.log('debug', 'Seq State ' + self.seqstate);
 					} else if (seq_state == 2) {	
 						self.feedbackstate.seqstate = 'Stop';
 						self.seqstate = 'Stop';
@@ -212,15 +189,12 @@ module.exports = {
 						self.feedbackstate.seqstate = 'Pause';
 						self.seqstate = 'Pause';
 					};
-					self.checkFeedbacks('state_color');
 					self.setVariableValues({
-						'seqid': self.seqID,
 						'seqstate': self.seqstate,
-						'nextqid': self.nextqid,
-					})
+					});
+					self.checkFeedbacks('state_color');
 					break;
-
-				case 73 :
+				case constants.CMD_GET_SEQ_TIME : 
 					seq_h = receivebuffer.readInt32BE(19);
 					seq_m = receivebuffer.readInt32BE(23);
 					seq_s = receivebuffer.readInt32BE(27);
@@ -231,18 +205,15 @@ module.exports = {
 					self.seqtime_s = self.padZero(2,seq_s);
 					self.seqtime_f = self.padZero(2,seq_f);
 					self.seqtime   = self.padZero(2,seq_h) +':'+self.padZero(2,seq_m)+':'+self.padZero(2,seq_s)+':'+self.padZero(2,seq_f);
-
 					self.setVariableValues({
-						'seqtime': self.seqtime,
-						'seqtime_h': self.seqtime_h,
-						'seqtime_m': self.seqtime_m,
-						'seqtime_s': self.seqtime_s,
-						'seqtime_f': self.seqtime_f,
-					})
+								'seqtime': self.seqtime,
+								'seqtime_h': self.seqtime_h,
+								'seqtime_m': self.seqtime_m,
+								'seqtime_s': self.seqtime_s,
+								'seqtime_f': self.seqtime_f,
+							});
 					break;
-
-				case 78 :
-					self.log('debug',"checkpoint")
+				case constants.CMD_GET_REMAINING_TIME_UNTIL_NEXT_CUE : 
 					nextq_h = receivebuffer.readInt32BE(19);
 					nextq_m = receivebuffer.readInt32BE(23);
 					nextq_s = receivebuffer.readInt32BE(27);
@@ -261,19 +232,18 @@ module.exports = {
 					} else {
 						self.feedbackstate.remainingQtime = 'Normal';
 					};
-					self.checkFeedbacks('next_Q_color');
-
 					self.setVariableValues({
 						'nextqtime': self.nextqtime,
 						'nextqtime_h': self.nextqtime_h,
 						'nextqtime_m': self.nextqtime_m,
 						'nextqtime_s': self.nextqtime_s,
 						'nextqtime_f': self.nextqtime_f,
-					})
-					self.log('debug', "received netxq TC")
+					});
+					self.checkFeedbacks('next_Q_color');
 					break;
 			}
 		}
 			// self.log('info', "Buffer : " + receivebuffer + " - " + rcv_cmd_id);
+			// console.log(receivebuffer)
 	}
 }
