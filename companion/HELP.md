@@ -1,4 +1,4 @@
-## Christie Pandoras Box V6
+## Christie Pandoras Box V6 and V8
 
 Nativ implementation using Christie Pandoras Box SDK
 
