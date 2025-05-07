@@ -1,26 +1,23 @@
 {
 	"name": "christie-pandorasbox",
-	"version": "2.0.3",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Media Server"
-	],
-	"manufacturer": "Christie Digital Systems",
-	"product": "Pandoras Box",
-	"shortname": "christie-pb",
-	"homepage": "https://github.com/bitfocus/companion-module-christie-pandorasbox#readme",
-	"description": "Module to control Christie Pandoras Box Media Servers",
-	"main": "christie-pandorasbox.js",
+	"version": "3.0.0",
+	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"author": "Daniel Kaminski <daniel@dk-production.de>",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-christie-pandorasbox/issues"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+		"lint": "yarn lint:raw ."
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-christie-pandorasbox.git"
-	}
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@companion-module/base": "~1.8",
+		"next-auth": "^4.22.3"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "~1.5"
+	},
+	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
