@@ -14,7 +14,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@companion-module/base": "~1.8",
-		"next-auth": "^4.22.3"
+		"next-auth": "^4.24.12"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "~1.5"
